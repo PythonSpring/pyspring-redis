@@ -7,6 +7,7 @@ from py_spring import Component, EntityProvider
 # Define a Redis document model for a BankAccount
 class BankAccountDocument(RedisKeyDocument):
     """A document that represents a bank account stored in Redis."""
+
     account_holder: str
     balance: float
 
@@ -14,12 +15,14 @@ class BankAccountDocument(RedisKeyDocument):
 # Repository for handling CRUD operations on BankAccountDocument
 class BankAccountRedisRepository(RedisCrudRepository[BankAccountDocument]):
     """A repository for managing bank accounts in Redis."""
+
     ...
+
 
 # Service that performs business logic related to bank accounts
 class BankService(Component):
     """Service to manage bank accounts stored in Redis."""
-    
+
     # Inject the repository for handling bank accounts
     repo: BankAccountRedisRepository
 
@@ -29,12 +32,14 @@ class BankService(Component):
         new_account = BankAccountDocument(
             id="acc_001",
             account_holder="John Smith",
-            balance=1000.00  # Initial balance
+            balance=1000.00,  # Initial balance
         )
 
         # Save the new account to Redis
         self.repo.save(new_account)
-        logger.info(f"New account created: {new_account.account_holder}, Balance: {new_account.balance}")
+        logger.info(
+            f"New account created: {new_account.account_holder}, Balance: {new_account.balance}"
+        )
 
         # Deposit money into the account
         self.deposit("acc_001", 500.00)
@@ -52,7 +57,9 @@ class BankService(Component):
 
         account.balance += amount
         self.repo.save(account)
-        logger.info(f"Deposited {amount} into account {account_id}. New balance: {account.balance}")
+        logger.info(
+            f"Deposited {amount} into account {account_id}. New balance: {account.balance}"
+        )
 
     def get_balance(self, account_id: str) -> float:
         """Retrieves the current balance of the specified bank account."""
@@ -76,17 +83,16 @@ class BankService(Component):
 
         account.balance -= amount
         self.repo.save(account)
-        logger.info(f"Withdrew {amount} from account {account_id}. New balance: {account.balance}")
+        logger.info(
+            f"Withdrew {amount} from account {account_id}. New balance: {account.balance}"
+        )
 
 
 def provide_redis_test_context() -> EntityProvider:
     """Provides the entity provider with Redis components for testing."""
     provider = EntityProvider(
-        properties_classes= [RedisProperties],
+        properties_classes=[],
         component_classes=[BankService, BankAccountRedisRepository],
-        depends_on= [
-            RedisCrudRepository,
-            RedisClient
-        ]
+        depends_on=[RedisCrudRepository, RedisClient],
     )
     return provider

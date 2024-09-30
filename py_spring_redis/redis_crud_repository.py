@@ -1,5 +1,6 @@
 import json
-from typing import Generic, Optional, Type, TypeVar, cast, get_args
+from typing import Generic, Optional, Type, TypeVar, get_args
+from loguru import logger
 
 from py_spring import Component
 
@@ -26,8 +27,15 @@ class RedisCrudRepository(Component, Generic[T]):
 
         return generic_type[-1]
 
-    def save(self, document: T) -> None:
-        self._redis_client.set(document.get_document_id(), document.model_dump_json())
+    def save(self, document: T) -> Optional[T]:
+        value = self._redis_client.set(
+            document.get_document_id(), document.model_dump_json()
+        )
+        if value is None:
+            logger.error(f"[SAVE DOCUMENT FAIELD] Failed to save document {document}")
+            return
+
+        return document
 
     def find_by_id(self, id: str) -> Optional[T]:
         _key = f"{self._key_prefix}:{id}"
