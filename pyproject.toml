@@ -20,6 +20,7 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+version = { source = "file", path = "py_spring_redis/__init__.py" }
 
 [tool.pdm.dev-dependencies]
 dev = [
