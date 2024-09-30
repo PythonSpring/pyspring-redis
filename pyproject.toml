@@ -7,7 +7,7 @@ authors = [
 ]
 dependencies = [
     "redis>=5.1.0",
-    "py-spring @ git+https://github.com/NFUChen/PySpring.git",
+    "py-spring @ git+https://github.com/PythonSpring/pyspring-core.git"
 ]
 requires-python = ">=3.10"
 readme = "README.md"
